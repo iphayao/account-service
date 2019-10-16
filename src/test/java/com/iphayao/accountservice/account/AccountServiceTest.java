@@ -1,5 +1,6 @@
 package com.iphayao.accountservice.account;
 
+import com.iphayao.accountservice.account.exception.SalaryLowerLimitException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -8,6 +9,9 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,7 +34,7 @@ class AccountServiceTest {
     private AccountService accountService;
 
     @Test
-    void test_create_new_account_expect_return_account_not_null() {
+    void test_create_new_account_expect_return_account_not_null() throws Exception {
         // arrange
         AccountDto accountDto = mockAccountDto();
         when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
@@ -43,7 +47,7 @@ class AccountServiceTest {
     }
 
     @Test
-    void test_create_new_account_expect_save_account() {
+    void test_create_new_account_expect_save_account() throws Exception {
         // arrange
         AccountDto accountDto = mockAccountDto();
 
@@ -55,10 +59,9 @@ class AccountServiceTest {
     }
 
     @Test
-    void test_create_new_account_expect_encrypted_password() {
+    void test_create_new_account_expect_encrypted_password() throws Exception {
         // arrange;
         AccountDto accountDto = mockAccountDto();
-
         when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
 
         // act
@@ -67,6 +70,120 @@ class AccountServiceTest {
         // assert
         assertNotEquals(accountDto.getPassword(), account.getPassword());
         assertTrue(passwordEncoder.matches(accountDto.getPassword(), account.getPassword()));
+    }
+
+    @Test
+    void test_create_new_account_expect_generate_reference_code() throws Exception {
+        // arrange
+        AccountDto accountDto = mockAccountDto();
+        String expectReferenceCode = generateExpectReferenceCode(accountDto);
+        when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
+
+        // act
+        Account account = accountService.createNewAccount(accountDto);
+
+        // assert
+        assertEquals(expectReferenceCode, account.getReferenceCode());
+    }
+
+    @Test
+    void test_create_new_account_expect_member_type_silver_when_salary_15000() throws Exception {
+        // arrange
+        AccountDto accountDto = mockAccountDto();
+        accountDto.setSalary(15000);
+        when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
+
+        // act
+        Account account = accountService.createNewAccount(accountDto);
+
+        // assert
+        assertEquals(MemberType.SILVER, account.getMemberType());
+    }
+
+    @Test
+    void test_create_new_account_expect_member_type_silver_when_salary_29999() throws Exception {
+        // arrange
+        AccountDto accountDto = mockAccountDto();
+        accountDto.setSalary(29999);
+        when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
+
+        // act
+        Account account = accountService.createNewAccount(accountDto);
+
+        // assert
+        assertEquals(MemberType.SILVER, account.getMemberType());
+    }
+
+    @Test
+    void test_create_new_account_expect_member_type_gold_when_salary_30000() throws Exception {
+        // arrange
+        AccountDto accountDto = mockAccountDto();
+        accountDto.setSalary(30000);
+        when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
+
+        // act
+        Account account = accountService.createNewAccount(accountDto);
+
+        // assert
+        assertEquals(MemberType.GOLD, account.getMemberType());
+    }
+
+    @Test
+    void test_create_new_account_expect_member_type_gold_when_salary_50000() throws Exception {
+        // arrange
+        AccountDto accountDto = mockAccountDto();
+        accountDto.setSalary(50000);
+        when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
+
+        // act
+        Account account = accountService.createNewAccount(accountDto);
+
+        // assert
+        assertEquals(MemberType.GOLD, account.getMemberType());
+    }
+
+    @Test
+    void test_create_new_account_expect_member_type_gold_when_salary_50001() throws Exception {
+        // arrange
+        AccountDto accountDto = mockAccountDto();
+        accountDto.setSalary(50001);
+        when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
+
+        // act
+        Account account = accountService.createNewAccount(accountDto);
+
+        // assert
+        assertEquals(MemberType.PLATINUM, account.getMemberType());
+    }
+
+    @Test
+    void test_create_new_account_expect_member_type_gold_when_salary_100000() throws Exception {
+        // arrange
+        AccountDto accountDto = mockAccountDto();
+        accountDto.setSalary(100000);
+        when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
+
+        // act
+        Account account = accountService.createNewAccount(accountDto);
+
+        // assert
+        assertEquals(MemberType.PLATINUM, account.getMemberType());
+    }
+
+    @Test
+    void test_create_new_account_expect_salary_lower_limit_exception_when_salary_14999() throws Exception {
+        // arrange
+        AccountDto accountDto = mockAccountDto();
+        accountDto.setSalary(14999);
+
+        // act
+        // assert
+        assertThrows(SalaryLowerLimitException.class, () -> accountService.createNewAccount(accountDto));
+
+    }
+
+    private String generateExpectReferenceCode(AccountDto accountDto) {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "6789";
     }
 
     private AccountDto mockAccountDto() {

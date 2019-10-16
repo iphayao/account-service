@@ -23,5 +23,5 @@ public class AccountDto {
     @Email
     @NotBlank
     private String email;
-    private int salary;
+    private double salary;
 }

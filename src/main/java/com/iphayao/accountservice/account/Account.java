@@ -20,6 +20,7 @@ public class Account {
     private String phoneNumber;
     private String address;
     private String email;
-    private int salary;
+    private double salary;
+    private MemberType memberType;
     private String referenceCode;
 }
