@@ -12,9 +12,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
@@ -84,6 +86,19 @@ class AccountServiceTest {
 
         // assert
         assertEquals(expectReferenceCode, account.getReferenceCode());
+    }
+
+    @Test
+    void test_create_new_account_expect_reference_code_size_12_digit() throws Exception {
+        // arrange
+        AccountDto accountDto = mockAccountDto();
+        when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
+
+        // act
+        Account account = accountService.createNewAccount(accountDto);
+
+        // assert
+        assertEquals(12, account.getReferenceCode().length());
     }
 
     @Test
@@ -179,7 +194,37 @@ class AccountServiceTest {
         // act
         // assert
         assertThrows(SalaryLowerLimitException.class, () -> accountService.createNewAccount(accountDto));
+    }
 
+    @Test
+    void test_find_account_by_reference_code_expect_account_not_null() throws Exception {
+        // arrange
+        String referenceCode = "201910131234";
+
+        when(accountRepository.findByReferenceCode(eq(referenceCode))).thenReturn(mockAccountEntity());
+
+        // act
+        Account account = accountService.findAccount(referenceCode);
+
+        // assert
+        assertNotNull(account);
+    }
+
+    @Test
+    void test_find_account_by_reference_code_expect_account_not_found_exception_when_not_found_account() {
+        // arrange
+        String referenceCode = "201910131234";
+
+        when(accountRepository.findByReferenceCode(eq(referenceCode))).thenReturn(Optional.empty());
+
+        // act
+        // assert
+        assertThrows(AccountNotFoundException.class, () -> accountService.findAccount(referenceCode));
+    }
+
+    private Optional<Account> mockAccountEntity() {
+        Account account = new Account();
+        return Optional.of(account);
     }
 
     private String generateExpectReferenceCode(AccountDto accountDto) {
