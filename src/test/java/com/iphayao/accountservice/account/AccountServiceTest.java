@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+import static com.iphayao.accountservice.account.TestHelper.mockAccountDto;
+import static com.iphayao.accountservice.account.TestHelper.mockAccountEntity;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -223,26 +225,8 @@ class AccountServiceTest {
         assertThrows(AccountNotFoundException.class, () -> accountService.findAccount(referenceCode));
     }
 
-    private Optional<Account> mockAccountEntity() {
-        Account account = new Account();
-        return Optional.of(account);
-    }
-
     private String generateExpectReferenceCode(AccountDto accountDto) {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "6789";
-    }
-
-    private AccountDto mockAccountDto() {
-        return AccountDto.builder()
-                .username("test_user")
-                .password("P@ssw0rd")
-                .firstName("John")
-                .lastName("Doe")
-                .phoneNumber("08123456789")
-                .address("123, Bangkok")
-                .email("john.doe@gmail.com")
-                .salary(15000)
-                .build();
     }
 
 }

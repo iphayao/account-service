@@ -2,6 +2,7 @@ package com.iphayao.accountservice.account;
 
 import com.iphayao.accountservice.account.exception.AccountNotFoundException;
 import com.iphayao.accountservice.account.exception.SalaryLowerLimitException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class AccountService {
     private AccountMapper accountMapper;
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
     public AccountService(AccountRepository accountRepository,
                           AccountMapper accountMapper,
                           PasswordEncoder passwordEncoder) {
