@@ -1,6 +1,6 @@
 package com.iphayao.accountservice.account;
 
-import com.iphayao.accountservice.ApiResponse;
+import com.iphayao.accountservice.common.ApiResponse;
 import com.iphayao.accountservice.account.exception.AccountNotFoundException;
 import com.iphayao.accountservice.account.exception.SalaryLowerLimitException;
 import org.junit.jupiter.api.Test;

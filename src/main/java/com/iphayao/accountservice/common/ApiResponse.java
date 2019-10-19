@@ -1,4 +1,4 @@
-package com.iphayao.accountservice;
+package com.iphayao.accountservice.common;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;
