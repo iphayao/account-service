@@ -26,6 +26,15 @@ public class ApiResponse<T> {
         return builder.data(data);
     }
 
+    public static <T> ApiResponse<T> error(T data) {
+        DataBuilder builder = error();
+        return builder.data(data);
+    }
+
+    private static DataBuilder error() {
+        return new SimpleDataBuilder(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     private static DataBuilder ok() {
         return new SimpleDataBuilder(HttpStatus.OK);
     }

@@ -1,6 +1,7 @@
 package com.iphayao.accountservice.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.iphayao.accountservice.account.exception.AccountNotFoundException;
 import com.iphayao.accountservice.common.ApiResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static com.iphayao.accountservice.account.TestHelper.mockAccountDto;
 import static com.iphayao.accountservice.account.TestHelper.mockAccountEntity;
@@ -138,7 +140,25 @@ class AccountControllerWebTest {
 
         // assert
         assertNotNull(resData.getData());
+    }
 
+    @Test
+    void test_get_account_expect_http_status_500() throws Exception {
+        // arrange
+        String referenceCode = "201910131234";
+        String accessToken = getBearerToken(CLIENT_ID, CLIENT_SECRET);
+
+        when(accountService.findAccount(eq(referenceCode))).thenThrow(AccountNotFoundException.class);
+
+        // act
+        MvcResult mvcResult = mockMvc.perform(get("/api/accounts/{reference_code}", referenceCode)
+                .header("Authorization", accessToken))
+                .andExpect(status().is5xxServerError())
+                .andReturn();
+
+        // assert
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), mvcResult.getResponse().getStatus());
+        assertNotNull(mvcResult.getResponse().getContentAsString());
     }
 
     private String getBearerToken(String clientId, String clientSecret) throws Exception {

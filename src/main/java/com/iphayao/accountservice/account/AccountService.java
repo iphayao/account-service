@@ -43,7 +43,7 @@ public class AccountService {
 
     public Account findAccount(String referenceCode) throws AccountNotFoundException {
         Optional<Account> account = accountRepository.findByReferenceCode(referenceCode);
-        return account.orElseThrow(AccountNotFoundException::new);
+        return account.orElseThrow(() -> new AccountNotFoundException(referenceCode));
     }
 
     private String generateReferenceCode(String phoneNumber) {
@@ -59,7 +59,7 @@ public class AccountService {
         } else if(salary < UPPER_BOUND_MEMBER_TYPE_SILVER && salary >= LOWER_BOUND_MEMBER_TYPE_SILVER) {
             return MemberType.SILVER;
         } else {
-            throw new SalaryLowerLimitException();
+            throw new SalaryLowerLimitException(salary);
         }
     }
 }
