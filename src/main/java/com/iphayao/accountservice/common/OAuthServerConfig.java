@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -16,9 +15,11 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @Configuration
 public class OAuthServerConfig extends AuthorizationServerConfigurerAdapter {
     AuthenticationManager authenticationManager;
+    PasswordEncoder passwordEncoder;
 
-    public OAuthServerConfig(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public OAuthServerConfig(AuthenticationConfiguration authenticationConfiguration, PasswordEncoder passwordEncoder) throws Exception {
         this.authenticationManager = authenticationConfiguration.getAuthenticationManager();
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -26,13 +27,8 @@ public class OAuthServerConfig extends AuthorizationServerConfigurerAdapter {
         clients.inMemory()
                 .withClient("app-client")
                 .authorizedGrantTypes("authorization_code", "client_credentials")
-                .secret(passwordEncoderOAuth().encode("noonewilleverguess"))
+                .secret(passwordEncoder.encode("noonewilleverguess"))
                 .scopes("openid");
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoderOAuth() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Override
