@@ -31,14 +31,20 @@ public class AccountService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Account createNewAccount(AccountDto accountDto) throws SalaryLowerLimitException {
-        Account newAccount = accountMapper.accountDtoToAccount(accountDto);
+    public Account createNewAccount(AccountDto accountDto)
+            throws SalaryLowerLimitException, AccountRegisteredException {
+        Optional<Account> existAccount = accountRepository.findByPhoneNumber(accountDto.getPhoneNumber());
+        if(!existAccount.isPresent()) {
+            Account newAccount = accountMapper.accountDtoToAccount(accountDto);
 
-        newAccount.setPassword(passwordEncoder.encode(accountDto.getPassword()));
-        newAccount.setReferenceCode(generateReferenceCode(accountDto.getPhoneNumber()));
-        newAccount.setMemberType(validateMemberType(accountDto.getSalary()));
+            newAccount.setPassword(passwordEncoder.encode(accountDto.getPassword()));
+            newAccount.setReferenceCode(generateReferenceCode(accountDto.getPhoneNumber()));
+            newAccount.setMemberType(validateMemberType(accountDto.getSalary()));
 
-        return accountRepository.save(newAccount);
+            return accountRepository.save(newAccount);
+        } else {
+            throw new AccountRegisteredException(accountDto.getPhoneNumber());
+        }
     }
 
     public Account findAccount(String referenceCode) throws AccountNotFoundException {

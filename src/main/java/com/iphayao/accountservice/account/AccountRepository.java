@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface AccountRepository extends CrudRepository<Account, Integer> {
     Optional<Account> findByReferenceCode(String referenceCode);
+    Optional<Account> findByPhoneNumber(String phoneNumber);
 }

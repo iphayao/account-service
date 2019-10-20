@@ -42,6 +42,7 @@ class AccountServiceTest {
     void test_create_new_account_expect_return_account_not_null() throws Exception {
         // arrange
         AccountDto accountDto = mockAccountDto();
+        when(accountRepository.findByPhoneNumber(eq(accountDto.getPhoneNumber()))).thenReturn(Optional.empty());
         when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
 
         // act
@@ -67,6 +68,7 @@ class AccountServiceTest {
     void test_create_new_account_expect_encrypted_password() throws Exception {
         // arrange;
         AccountDto accountDto = mockAccountDto();
+        when(accountRepository.findByPhoneNumber(eq(accountDto.getPhoneNumber()))).thenReturn(Optional.empty());
         when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
 
         // act
@@ -82,6 +84,7 @@ class AccountServiceTest {
         // arrange
         AccountDto accountDto = mockAccountDto();
         String expectReferenceCode = generateExpectReferenceCode(accountDto);
+        when(accountRepository.findByPhoneNumber(eq(accountDto.getPhoneNumber()))).thenReturn(Optional.empty());
         when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
 
         // act
@@ -95,6 +98,7 @@ class AccountServiceTest {
     void test_create_new_account_expect_reference_code_size_12_digit() throws Exception {
         // arrange
         AccountDto accountDto = mockAccountDto();
+        when(accountRepository.findByPhoneNumber(eq(accountDto.getPhoneNumber()))).thenReturn(Optional.empty());
         when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
 
         // act
@@ -109,6 +113,7 @@ class AccountServiceTest {
         // arrange
         AccountDto accountDto = mockAccountDto();
         accountDto.setSalary(15000);
+        when(accountRepository.findByPhoneNumber(eq(accountDto.getPhoneNumber()))).thenReturn(Optional.empty());
         when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
 
         // act
@@ -123,6 +128,7 @@ class AccountServiceTest {
         // arrange
         AccountDto accountDto = mockAccountDto();
         accountDto.setSalary(29999);
+        when(accountRepository.findByPhoneNumber(eq(accountDto.getPhoneNumber()))).thenReturn(Optional.empty());
         when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
 
         // act
@@ -137,6 +143,7 @@ class AccountServiceTest {
         // arrange
         AccountDto accountDto = mockAccountDto();
         accountDto.setSalary(30000);
+        when(accountRepository.findByPhoneNumber(eq(accountDto.getPhoneNumber()))).thenReturn(Optional.empty());
         when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
 
         // act
@@ -151,6 +158,7 @@ class AccountServiceTest {
         // arrange
         AccountDto accountDto = mockAccountDto();
         accountDto.setSalary(50000);
+        when(accountRepository.findByPhoneNumber(eq(accountDto.getPhoneNumber()))).thenReturn(Optional.empty());
         when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
 
         // act
@@ -165,6 +173,7 @@ class AccountServiceTest {
         // arrange
         AccountDto accountDto = mockAccountDto();
         accountDto.setSalary(50001);
+        when(accountRepository.findByPhoneNumber(eq(accountDto.getPhoneNumber()))).thenReturn(Optional.empty());
         when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
 
         // act
@@ -179,6 +188,7 @@ class AccountServiceTest {
         // arrange
         AccountDto accountDto = mockAccountDto();
         accountDto.setSalary(100000);
+        when(accountRepository.findByPhoneNumber(eq(accountDto.getPhoneNumber()))).thenReturn(Optional.empty());
         when(accountRepository.save(any(Account.class))).thenAnswer(value -> value.getArgument(0));
 
         // act
@@ -197,6 +207,17 @@ class AccountServiceTest {
         // act
         // assert
         assertThrows(SalaryLowerLimitException.class, () -> accountService.createNewAccount(accountDto));
+    }
+
+    @Test
+    void test_create_new_account_expect_account_registered_exception_when_register_same_mobile_number() {
+        // arrange
+        AccountDto accountDto = mockAccountDto();
+        when(accountRepository.findByPhoneNumber(eq(accountDto.getPhoneNumber()))).thenReturn(mockAccountEntity());
+
+        // act
+        // assert
+        assertThrows(AccountRegisteredException.class, () -> accountService.createNewAccount(accountDto));
     }
 
     @Test

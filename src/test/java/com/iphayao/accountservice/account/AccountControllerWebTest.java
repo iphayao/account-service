@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Map;
-import java.util.Optional;
 
 import static com.iphayao.accountservice.account.TestHelper.mockAccountDto;
 import static com.iphayao.accountservice.account.TestHelper.mockAccountEntity;

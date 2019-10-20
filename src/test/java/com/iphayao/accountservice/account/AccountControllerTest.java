@@ -1,5 +1,6 @@
 package com.iphayao.accountservice.account;
 
+import com.iphayao.accountservice.common.ApiException;
 import com.iphayao.accountservice.common.ApiResponse;
 import com.iphayao.accountservice.account.exception.AccountNotFoundException;
 import com.iphayao.accountservice.account.exception.SalaryLowerLimitException;
@@ -30,7 +31,7 @@ class AccountControllerTest {
     private AccountController accountController;
 
     @Test
-    void test_create_new_account_expect_account_response() throws SalaryLowerLimitException {
+    void test_create_new_account_expect_account_response() throws ApiException {
         // arrange
         AccountDto accountDto = mockAccountDto();
 
@@ -43,7 +44,7 @@ class AccountControllerTest {
     }
 
     @Test
-    void test_create_new_account_expect_status_code_201() throws SalaryLowerLimitException {
+    void test_create_new_account_expect_status_code_201() throws ApiException {
         // arrange
         AccountDto accountDto = mockAccountDto();
 
@@ -56,7 +57,7 @@ class AccountControllerTest {
     }
 
     @Test
-    void test_create_new_account_expect_body_status_created() throws SalaryLowerLimitException {
+    void test_create_new_account_expect_body_status_created() throws ApiException {
         // arrange
         AccountDto accountDto = mockAccountDto();
 
@@ -69,7 +70,7 @@ class AccountControllerTest {
     }
 
     @Test
-    void test_create_new_account_expect_body_data_not_null() throws SalaryLowerLimitException {
+    void test_create_new_account_expect_body_data_not_null() throws ApiException {
         // arrange
         AccountDto accountDto = mockAccountDto();
         when(accountService.createNewAccount(eq(accountDto))).thenReturn(mockAccountEntity().get());
@@ -83,7 +84,7 @@ class AccountControllerTest {
     }
 
     @Test
-    void test_create_new_account_expect_body_data_key_field_match_with_dto() throws SalaryLowerLimitException {
+    void test_create_new_account_expect_body_data_key_field_match_with_dto() throws ApiException {
         // arrange
         AccountDto accountDto = mockAccountDto();
         when(accountService.createNewAccount(eq(accountDto))).thenReturn(mockAccountEntity().get());
@@ -108,7 +109,7 @@ class AccountControllerTest {
     }
 
     @Test
-    void test_get_account_expect_account_response() throws AccountNotFoundException {
+    void test_get_account_expect_account_response() throws ApiException {
         // arrange
         String referenceCode = "201910131234";
 
@@ -120,7 +121,7 @@ class AccountControllerTest {
     }
 
     @Test
-    void test_get_account_expect_status_code_200() throws AccountNotFoundException {
+    void test_get_account_expect_status_code_200() throws ApiException {
         // arrange
         String referenceCode = "201910131234";
 
@@ -132,7 +133,7 @@ class AccountControllerTest {
     }
 
     @Test
-    void test_get_account_expect_body_status_ok() throws AccountNotFoundException {
+    void test_get_account_expect_body_status_ok() throws ApiException {
         // arrange
         String referenceCode = "201910131234";
 
@@ -144,7 +145,7 @@ class AccountControllerTest {
     }
 
     @Test
-    void test_get_account_expect_body_data_not_null() throws AccountNotFoundException {
+    void test_get_account_expect_body_data_not_null() throws ApiException {
         // arrange
         String referenceCode = "201910131234";
         when(accountService.findAccount(eq(referenceCode))).thenReturn(mockAccountEntity().get());
@@ -157,7 +158,7 @@ class AccountControllerTest {
     }
 
     @Test
-    void test_get_account_expect_body_data_key_fields_correct() throws AccountNotFoundException {
+    void test_get_account_expect_body_data_key_fields_correct() throws ApiException {
         // arrange
         String referenceCode = "201910131234";
         AccountDto accountDto = mockAccountDto();

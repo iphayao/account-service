@@ -18,13 +18,15 @@ public class AccountController {
     private AccountMapper mapper;
 
     @GetMapping("/{reference_code}")
-    public ResponseEntity<ApiResponse> getAccount(@PathVariable("reference_code") String referenceCode) throws AccountNotFoundException {
+    public ResponseEntity<ApiResponse> getAccount(@PathVariable("reference_code") String referenceCode)
+            throws AccountNotFoundException {
         Account account = accountService.findAccount(referenceCode);
         return ResponseEntity.ok(ApiResponse.ok(mapper.accountToAccountRespDto(account)));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> registerAccount(@RequestBody AccountDto accountDto) throws SalaryLowerLimitException {
+    public ResponseEntity<ApiResponse> registerAccount(@RequestBody AccountDto accountDto)
+            throws SalaryLowerLimitException, AccountRegisteredException {
         Account account = accountService.createNewAccount(accountDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.created(mapper.accountToAccountRespDto(account)));
